@@ -56,6 +56,8 @@
     
     BOOL _isCapturing;
     dispatch_queue_t _captureQueue;
+    
+    CIColor *_overlayColor;
 }
 
 - (void)awakeFromNib
@@ -65,6 +67,9 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_backgroundMode) name:UIApplicationWillResignActiveNotification object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_foregroundMode) name:UIApplicationDidBecomeActiveNotification object:nil];
+    
+    _borderDetectionOverlayColor = [UIColor.redColor colorWithAlphaComponent:0.6];
+    _borderDetectDelay = 0.5;
     
     _captureQueue = dispatch_queue_create("com.instapdf.AVCameraCaptureQueue", DISPATCH_QUEUE_SERIAL);
 }
@@ -253,7 +258,7 @@
 
 - (CIImage *)drawHighlightOverlayForPoints:(CIImage *)image topLeft:(CGPoint)topLeft topRight:(CGPoint)topRight bottomLeft:(CGPoint)bottomLeft bottomRight:(CGPoint)bottomRight
 {
-    CIImage *overlay = [CIImage imageWithColor:[CIColor colorWithRed:1 green:0 blue:0 alpha:0.6]];
+    CIImage *overlay = [CIImage imageWithColor:_overlayColor];
     overlay = [overlay imageByCroppingToRect:image.extent];
     overlay = [overlay imageByApplyingFilter:@"CIPerspectiveTransformWithExtent" withInputParameters:@{@"inputExtent":[CIVector vectorWithCGRect:image.extent],@"inputTopLeft":[CIVector vectorWithCGPoint:topLeft],@"inputTopRight":[CIVector vectorWithCGPoint:topRight],@"inputBottomLeft":[CIVector vectorWithCGPoint:bottomLeft],@"inputBottomRight":[CIVector vectorWithCGPoint:bottomRight]}];
     
@@ -266,7 +271,7 @@
     
     [self.captureSession startRunning];
     
-    _borderDetectTimeKeeper = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(enableBorderDetectFrame) userInfo:nil repeats:YES];
+    _borderDetectTimeKeeper = [NSTimer scheduledTimerWithTimeInterval:_borderDetectDelay target:self selector:@selector(enableBorderDetectFrame) userInfo:nil repeats:YES];
     
     [self hideGLKView:NO completion:nil];
 }
@@ -594,4 +599,8 @@ BOOL rectangleDetectionConfidenceHighEnough(float confidence)
     return (confidence > 1.0);
 }
 
+- (void) setBorderDetectionOverlayColor:(UIColor *)borderDetectionOverlayColor {
+    _borderDetectionOverlayColor = borderDetectionOverlayColor;
+    _overlayColor = [[CIColor alloc] initWithColor:_borderDetectionOverlayColor];
+}
 @end

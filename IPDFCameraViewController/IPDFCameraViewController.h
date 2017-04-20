@@ -23,6 +23,8 @@ typedef NS_ENUM(NSInteger,IPDFCameraViewType)
 
 @property (nonatomic,assign,getter=isBorderDetectionEnabled) BOOL enableBorderDetection;
 @property (nonatomic,assign,getter=isTorchEnabled) BOOL enableTorch;
+@property (nonatomic,strong) UIColor *borderDetectionOverlayColor;
+@property (nonatomic,assign) NSTimeInterval borderDetectDelay;
 
 @property (nonatomic,assign) IPDFCameraViewType cameraViewType;
 
