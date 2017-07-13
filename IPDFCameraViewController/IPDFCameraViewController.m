@@ -260,9 +260,21 @@
 {
     CIImage *overlay = [CIImage imageWithColor:_overlayColor];
     overlay = [overlay imageByCroppingToRect:image.extent];
-    overlay = [overlay imageByApplyingFilter:@"CIPerspectiveTransformWithExtent" withInputParameters:@{@"inputExtent":[CIVector vectorWithCGRect:image.extent],@"inputTopLeft":[CIVector vectorWithCGPoint:topLeft],@"inputTopRight":[CIVector vectorWithCGPoint:topRight],@"inputBottomLeft":[CIVector vectorWithCGPoint:bottomLeft],@"inputBottomRight":[CIVector vectorWithCGPoint:bottomRight]}];
-    
-    return [overlay imageByCompositingOverImage:image];
+    overlay = [overlay imageByApplyingFilter:@"CIPerspectiveTransformWithExtent" withInputParameters:@{@"inputExtent":[CIVector vectorWithCGRect:image.extent],@"inputTopLeft":[CIVector vectorWithCGPoint:topLeft],@"inputTopRight":[CIVector vectorWithCGPoint:topRight],@"inputBottomLeft":[CIVector vectorWithCGPoint:CGPointMake(topLeft.x, topLeft.y + 10)],@"inputBottomRight":[CIVector vectorWithCGPoint:CGPointMake(topRight.x, topRight.y + 10)]}];
+    image = [overlay imageByCompositingOverImage:image];
+    overlay = [CIImage imageWithColor:_overlayColor];
+    overlay = [overlay imageByCroppingToRect:image.extent];
+    overlay = [overlay imageByApplyingFilter:@"CIPerspectiveTransformWithExtent" withInputParameters:@{@"inputExtent":[CIVector vectorWithCGRect:image.extent],@"inputTopLeft":[CIVector vectorWithCGPoint:CGPointMake(bottomLeft.x, bottomLeft.y - 10)],@"inputTopRight":[CIVector vectorWithCGPoint:CGPointMake(bottomRight.x, bottomRight.y - 10)],@"inputBottomLeft":[CIVector vectorWithCGPoint:bottomLeft],@"inputBottomRight":[CIVector vectorWithCGPoint:bottomRight]}];
+    image = [overlay imageByCompositingOverImage:image];
+    overlay = [CIImage imageWithColor:_overlayColor];
+    overlay = [overlay imageByCroppingToRect:image.extent];
+    overlay = [overlay imageByApplyingFilter:@"CIPerspectiveTransformWithExtent" withInputParameters:@{@"inputExtent":[CIVector vectorWithCGRect:image.extent],@"inputTopLeft":[CIVector vectorWithCGPoint:topLeft],@"inputTopRight":[CIVector vectorWithCGPoint:CGPointMake(topLeft.x + 10, topLeft.y)],@"inputBottomLeft":[CIVector vectorWithCGPoint:bottomLeft],@"inputBottomRight":[CIVector vectorWithCGPoint:CGPointMake(bottomLeft.x + 10, bottomLeft.y)]}];
+    image = [overlay imageByCompositingOverImage:image];
+    overlay = [CIImage imageWithColor:_overlayColor];
+    overlay = [overlay imageByCroppingToRect:image.extent];
+    overlay = [overlay imageByApplyingFilter:@"CIPerspectiveTransformWithExtent" withInputParameters:@{@"inputExtent":[CIVector vectorWithCGRect:image.extent],@"inputTopLeft":[CIVector vectorWithCGPoint:CGPointMake(topRight.x - 10, topRight.y)],@"inputTopRight":[CIVector vectorWithCGPoint:topRight],@"inputBottomLeft":[CIVector vectorWithCGPoint:CGPointMake(bottomRight.x - 10, bottomRight.y)   ],@"inputBottomRight":[CIVector vectorWithCGPoint:bottomRight]}];
+    image = [overlay imageByCompositingOverImage:image];
+    return image;
 }
 
 - (void)start
